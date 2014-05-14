@@ -1,6 +1,7 @@
 var trials = require('trial-client/index')
 var http = require('http')
 var async = require('async')
+var crypto = require('crypto')
 
 // set the host name of the trials server:
 trials.serverHost = 'http://10.0.1.99:3001'
@@ -31,6 +32,17 @@ trials.add(function(urls, callback) {
       res.on('end', function() { callback(null, body) })
     })
   }, callback)
+})
+
+trials.add(function(key, callback) {
+  // Provide a function that takes two arguments, `key` and `callback`.
+  // Generate a hmac hash of your team name using sha256 and the given key. Call the
+  // callback with the Base64 encoded hash as the result. Make sure you run the
+  // callback in the standard way, error first: `callback(err, result)`.
+
+  var hmac = crypto.createHmac('sha256', key)
+  hmac.update(trials.teamName)
+  callback(null, hmac.digest('base64'))
 })
 
 
